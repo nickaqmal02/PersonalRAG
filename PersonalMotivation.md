@@ -39,3 +39,78 @@ pip install -e .
 ```
 
 
+## what does .strip() does ??
+: let say
+word = "$$AI$$"
+print(word.strip("$")) -> AI 
+
+## how do we find the page number and extract it
+
+
+```python
+\d any digit
+\s any whitespace like space tab newline 
+. any character 
+* zero or more times
++ one or more times
+
+(?i) dont care about the case sensitivity mate 
+(?: group these options together but dont save them
+page : page
+p\.? p then maybe a dot
+\s* any amount of space 
+\d+ one or more digits
+
+
+"""
+the question is when do we shall use ? + at the end ??
+
++ when it shall have at least 1
+
+? why this "?" 
+
+for example we have
+
+\s*[:.]?
+
+? here means that, it could be no dot or even no double dot
+
+without ? must exactly have one of it ? this is very crucial situation when building flexible big scales operation
+
+is it every regex compulsory for us to put $ at the end r ' $'
+
+ok so here is the explanation, I hope u gonna be thank you for yourself nicky in future
+
+so here is the things
+
+
+"""
+
+let say 
+
+r'\d+'
+
+"Hello 42, then 99, and finally 100"
+
+by not using $ at the end so what we can have is all the numbers 
+
+so what we can do is 
+
+ok before that when to use
+
+re.search vs re.findall ??
+
+use re.search() while u wanting the exact one value from that
+
+use re.findall() while finding multiple input from the text 
+
+'', text if we wanna just few words but 
+'', document when multiple
+
+
+
+    
+
+```
+
+
