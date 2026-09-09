@@ -1,0 +1,2 @@
+[console_scripts]
+PersonalRAG = PersonalRAG.cli.main:cli

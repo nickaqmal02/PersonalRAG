@@ -23,4 +23,19 @@ WHILE
 ## ====== PROJECT LEARNING DOCUMENTATION ======
 BY @nick
 
+- what is pyproject.toml 
+
+- the differences between requirements.txt and pyproject.toml ??
+
+- think like pyproject.toml -> the complete blueprint and build manual for your entire project.
+
+- but requirements.txt like grocery list
+
+- how to install all item in pyproject.toml
+
+```
+pip install -e .
+
+```
+
 
