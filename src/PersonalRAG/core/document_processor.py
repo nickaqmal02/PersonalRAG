@@ -205,4 +205,46 @@ class DocumentProcessor:
         return self.documents
 
     # chunking document
+    def chunk_documents(self) -> List[Document]
+        """
+        split documents into chunks
+        """
+        if not self.documents:
+            logger.warning("No documents to chunk !")
+            return []
 
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=self.chunk_size,
+            chunk_overlap=self.chunk_overlap,
+            length_function=len,
+            seperators=["\n\n", "\n", " ", ""]
+        )
+
+        chunks = splitter.split_documents(self.documents)
+        self.stats['chunk_created'] = len(chunks)
+
+        logger.info(f"Created {len(chunks)} chunks")
+        return chunks
+    
+    def process(self, source_path: Optional[str] = None) -> List[Document]:
+        """full processing pipeline a.k.a this is where full process of pipeline happen """
+        logger.info(f"Starting document processing .... ")
+
+        # load all document types using our created method
+        self.load_pdfs(source_path)
+        self.load_csv(source_path)
+        self.load_text_files(source_path)
+
+        # chunk
+        chunks = self.chunk_documents()
+
+        logger.info(f"Pipeline complete: {len(chunks)} chunks from {self.stats['pages_processed'] pages}")
+        return chunks
+
+    def get_stats(self) -> Dict[str, int]:
+        """Get processing statistics."""
+        return self.stats
+
+
+
+        

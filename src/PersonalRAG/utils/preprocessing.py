@@ -89,7 +89,9 @@ def extract_metadata(text:str) -> Dict[str, Any]:
     if page_match:
         metadata['page_number'] = int(page_match.group(1))
 
-    chapter_match = re.search(r'(?i)(?:chapter|section)\s+(\d+|[IVXLCDM]+)\s*[:.]?\s*(.+)?$', text, re.MULTILINE)
+    chapter_match = re.search(r'
+    (?i)(?:chapter|section)\s+(\d+|[IVXLCDM]+)\s*[:.]?\s*(.+)?$
+            ', text, re.MULTILINE)
     
     if chapter_match:
         metadata['chapter_number'] = chapter_match.group(1)
