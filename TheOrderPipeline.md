@@ -15,6 +15,8 @@ graph LR
 
 ## current step
 - chunking
+- embedding_manager
+- 
 
 
 """

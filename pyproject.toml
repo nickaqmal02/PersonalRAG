@@ -1,24 +1,45 @@
-[project]
-name = "PersonalRAG"
+[tool.poetry]
+name = "personal-rag"
 version = "0.1.0"
-description = " Personal RAG agent with TUI "
-authors = [{name= " NIK ABDUL AQMAL BIN ZUNAIDI ", email = "nikabdulaqmal@gmail.com"}]
-license = {text = "MIT"}
-requires-python = ">=3.10"
+description = "Personal RAG agent with TUI"
+authors = ["NIK ABDUL AQMAL <nikabdulaqmal@gmail.com>"]
+readme = "README.md"
+packages = [{include = "rag_agent", from = "src"}]
 
-dependencies = [
-    "textual>=0.40.0",
-    "langchain-groq>=0.1.0",
-    "sentence-transformers>=2.2.0",
-    "chromadb>=0.5.0",
-    "click>=8.0.0",
-]
+[tool.poetry.dependencies]
+python = "^3.10"
+textual = "^0.40.0"
+langchain-groq = "^0.1.0"
+langchain-community = "^0.2.0"
+langchain-core = "^0.2.0"
+langchain-text-splitters = "^0.2.0"
+sentence-transformers = "^2.2.0"
+chromadb = "^0.5.0"
+pypdf = "^4.0.0"
+pymupdf = "^1.24.0"
+rich = "^13.0.0"
+click = "^8.0.0"
+pydantic = "^2.0.0"
+pydantic-settings = "^2.0.0"
+python-dotenv = "^1.0.0"
+pandas = "^2.0.0"
+numpy = "^1.24.0"
+tqdm = "^4.65.0"
 
-[project.scripts]
-PersonalRAG = "PersonalRAG.cli.main:cli"
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0.0"
 
-[project.optional-dependencies]
-dev = ["pytest>=7.0.0", "black>=23.0.0", "ruff>=0.1.0"]
+pytest-asyncio = "^0.21.0"
+black= "^23.0.0"
+ruff = "^0.1.0"
+mypy = "^1.0.0"
+pre-commit = "^3.0.0"
 
-[tool.black]
-line-length = 88
+[tool.poetry.scripts]
+rag-agent = "rag_agent.cli.main:cli"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+

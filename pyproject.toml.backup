@@ -1,0 +1,24 @@
+[project]
+name = "PersonalRAG"
+version = "0.1.0"
+description = " Personal RAG agent with TUI "
+authors = [{name= " NIK ABDUL AQMAL BIN ZUNAIDI ", email = "nikabdulaqmal@gmail.com"}]
+license = {text = "MIT"}
+requires-python = ">=3.10"
+
+dependencies = [
+    "textual>=0.40.0",
+    "langchain-groq>=0.1.0",
+    "sentence-transformers>=2.2.0",
+    "chromadb>=0.5.0",
+    "click>=8.0.0",
+]
+
+[project.scripts]
+PersonalRAG = "PersonalRAG.cli.main:cli"
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0.0", "black>=23.0.0", "ruff>=0.1.0"]
+
+[tool.black]
+line-length = 88

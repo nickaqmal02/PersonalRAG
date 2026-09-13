@@ -57,11 +57,7 @@ class VectorStore:
             logger.info(f"Error initializing vector store: {e}")
             raise
 
-    def add_documents(
-        self,
-        documents: List[Document],
-        embeddings: np.ndarray,
-    ) -> int:
+    def add_documents(self, documents: List[Document], embeddings: np.ndarray,) -> int:
         """Add documents and embeddings to the store"""
         if len(documents) != len(embeddings):
             raise ValueError(
@@ -82,4 +78,48 @@ class VectorStore:
             ids.append(doc_id)
 
             metadata = dict(doc.metadata)
-            metadatas
+            metadata['doc_index'] = i
+            metadata['content_lenght'] = len(doc.page_content)
+            metadatas.append(metadata)
+
+            documents_text.append(doc.page_content)
+            embeddings_list.append(embedding.tolist())
+
+        try:
+            self.collection.add(
+                ids=ids,
+                embeddings=embeddings_list,
+                metadatas=metadatas,
+                documents=documents_text,
+            )
+            logger.info(f"Added {len(documents)} documents")
+            logger.info(f"Total: {self.collection.count()}")
+            return len(documents)
+
+        except Exception as e:
+            logger.error(f"Error adding documents: {e}")
+            raise
+
+    def query(self, query_embedding: List[float], top_k: int = 5, ) -> Dict[str, Any]:
+        """Query the vector store."""
+        if not self.collection:
+            raise ValueError("Collection not initialized")
+
+        try:
+            results = self.collection.query(
+         query_embeddings=[query_embedding],
+                n_results=top_k,
+                include=["documents","metadata", "distances"],
+            )
+            return results
+        except Exception as e:
+            logger.error(f"Error querying vector store: {e}")
+            return {"documents": [], "metadatas": [], "distances": [], "ids": []}
+
+    def count(self) -> int:
+        """Get the number of documents in the collection"""
+        if not self.collection:
+            return 0
+        return self.collection.count()
+
+
