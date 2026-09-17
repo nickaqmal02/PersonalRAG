@@ -1,0 +1,6 @@
+this is one way to write into file
+
+
+
+
+

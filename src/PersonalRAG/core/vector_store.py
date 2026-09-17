@@ -47,7 +47,7 @@ class VectorStore:
 
             self.collection = self.client.get_or_create_collection(
                 name=self.collection_name,
-                metadata={"description": "RAG document embeddings"},
+                metadatas={"description": "RAG document embeddings"},
             )
 
             logger.info(f"Vector store initialized. Collection {self.collection_name}")
@@ -77,10 +77,10 @@ class VectorStore:
             doc_id = f"doc_{uuid.uuid4().hex[:8]}_{i}"
             ids.append(doc_id)
 
-            metadata = dict(doc.metadata)
-            metadata['doc_index'] = i
-            metadata['content_lenght'] = len(doc.page_content)
-            metadatas.append(metadata)
+            metadatas = dict(doc.metadatas)
+            metadatas['doc_index'] = i
+            metadatas['content_lenght'] = len(doc.page_content)
+            metadatas.append(metadatas)
 
             documents_text.append(doc.page_content)
             embeddings_list.append(embedding.tolist())
@@ -109,7 +109,7 @@ class VectorStore:
             results = self.collection.query(
          query_embeddings=[query_embedding],
                 n_results=top_k,
-                include=["documents","metadata", "distances"],
+                include=["documents","metadatas", "distances"],
             )
             return results
         except Exception as e:

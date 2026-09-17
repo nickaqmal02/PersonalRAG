@@ -12,7 +12,10 @@ logger = logging.getLogger(__name__)
 class EmbeddingManager:
     """Handles document embedding generation."""
 
-    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
+    def __init__(
+        self,
+        model_name: str = "all-MiniLM-L6-v2"
+    ):
         self.model_name = model_name
         self.model: Optional[SentenceTransformer] = None
         self._load_model()

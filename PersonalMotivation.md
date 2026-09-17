@@ -17,7 +17,7 @@ Year 10: "I know I don't know everything, and that's okay"
 
 # THE BIGGEST DIFFERENCE BETWEEN JUNIOR AND SENIOR ENGINEERS IS ?
 - JUNIORS: HIDE THEIR VULNERABILITIES
-WHILE 
+WHILE
 - SENIORS: ACKNOWLEDGE AND ADDRESS THEIR VULNERABILITIES
 
 ## ====== PROJECT LEARNING DOCUMENTATION ======
@@ -113,6 +113,141 @@ use re.findall() while finding multiple input from the text
 
 ```
 
+## WHY WE NEED TO BUILD PERSONAL PROJECT ??
+### WHY AND WHY AND WHY ??
+
+- The story like this, 
+
+A lot of successfull developer building their personal open-source project
+
+example:
+
+| DEVELOPER | WHAT THEY BUILT | WHY ? |
+| --------------- | --------------- | --------------- |
+| LINUS TORVALDS | LINUX | I WANTED FREE OS, SO I BUILT ONE  |
+
+
 ### lesson start
 
 *what is sys ?: sys means for system *
+
+
+## THE STRUCTURE OF OUR PROJECTNAME/CLI/MAIN.PY 
+
+*How to really learn from this project* ??
+
+#### all things that we really need to plan in our head 
+
+```
+
+What does user actually want ? 
+
+### DEFINE USER GOALS
+
+-> Load document ( which is ingestion )
+-> Ask questions (chat)
+-> Check system (status) by logger
+-> See the version ()
+-> Use TUI (tui)
+
+~ the things is we shall start with user needs, not code 
+
+### DEFINE COMMANDS
+
+~ noted that, each user goal one CLI command
+
+-> we use decorator from click documentation
+
+@cli.command()
+def ingest()...
+
+### STEP 3: DEFINE WHAT INPUTS REALLY NEEDED
+
+?? What does each command need ??
+
+: so each command like 
+
+- ingest: path, chunk_size, chunk_overlap
+- chat: query, interactive, top_k
+
+
+
+
+
+```
+
+
+### Now what we need to do is check each method that needed for main application is working really well
+
+> 
+adding checking the method that needed for building and ensuring our main application working really well
+
+##### METHOD IN OUR MAIN.PY needed for our main.py
+
+- pipeline/rag_pipeline : RAGPipeline
+- core/retriever : RAGRetriever
+- core/vector_store : VectorStore
+- llm/groq_provider : GroqProvider
+- config/settings : settings
+- 
+settings.default_model ??
+- 
+
+> The question is, what does each function does ??
+- settings.is_llm_configured 
+- 
+
+*what does the top_k means ??* it means that ??
+top relevant document for our query
+
+
+
+
+
+## DEVOPS ENGINEER / SYSTEM ENGINEER
+
+> 10 BASIC COMMAND THAT WE ALWAYS NEED TO BE USE
+
+- ls -l --color -la 
+*
+- passwd
+- cat > cd.txt : to write and create new txt file
+- cat ab.txt cd.txt > newfile : to connect both file together
+- mv ab.txt abRename.txt
+- ls -a : see hidden file
+- ls -ltr : much more detail
+- rm -rf abRename.txt
+- cp abRename.txt path
+- ps -f : displaying all current process that running right now
+- k command to kill the process
+- k -9 to kill the pid
+- chmod to allow everyone to CRUD the file
+
+
+## the differences between pass and continue
+
+```python
+for n in range(5):
+    if n == 2:
+        pass
+    print(n)
+
+# this will print 2 like normal but apart from that 
+
+for i in range(5):
+    if i == 2:
+        continue
+    print(n)
+
+# not printing the 2 value actually
+
+# another one ins break directly
+for n in range(5):
+    if n == 2:
+        break
+    print(n)
+
+# this will break directly from that loop
+```
+
+
