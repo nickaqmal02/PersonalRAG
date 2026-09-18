@@ -26,7 +26,7 @@ class EmbeddingManager:
             logger.info(f"Loading embedding model: {self.model_name}")
             self.model = SentenceTransformer(self.model_name)
             logger.info(
-                f"Model loaded. Dimension: {self.model.get_embedding_dimension()}"
+                f"Model loaded. Dimension: {self.model.get_sentence_embedding_dimension()}"
             )
         except Exception as e:
             logger.error(f"Error loading model: {e}")
@@ -45,6 +45,6 @@ class EmbeddingManager:
         """Get the embedding dimenstions. """
         if not self.model:
             raise ValueError("Model not loaded.")
-        return self.model.get_embedding_dimension()
+        return self.model.get_sentence_embedding_dimension()
 
 

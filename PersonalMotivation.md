@@ -249,5 +249,143 @@ for n in range(5):
 
 # this will break directly from that loop
 ```
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+### GIT LESSON
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+
+```
+
+# removing the .env if staged which is still not push and not commit yet
+git rm --cached .env
+
+# removing the .env if commited but not push yet
+git rm --cached .env
+git commit --amend
+
+# if env was commited and push
+git filter-repo --path .env --invert-paths --force
+
+git remote add origin <url>
+
+git push origin --force --all
+
+# Conventional commits style:
+
+feat: new feature
+fix: bug fix 
+test: tests
+docs: documentation
+chore: maintenance
 
 
+```
+#### ::::::::::::::::::::::::
+#### ::::::::::::::::::::::::
+#### ::::::::::::::::::::::::
+### NVIM PROFICIENCY
+#### ::::::::::::::::::::::::
+#### ::::::::::::::::::::::::
+#### ::::::::::::::::::::::::
+
+**DELETING EVERYTHING**
+```
+di: delete inside
+ci: deletes inside and be into insert mode
+
+da: delete around the quotes
+ca: delete around the quotes and be into insert mode
+
+so ?? 
+q means quote
+b for a whole []
+B only latest {}
+
+how to apply then ??
+
+the snippets 
+
+diq : means delete inside quotes
+ciq : means delete inside quotes and be into insert mode
+
+daq : means delete around quotes
+caq : means delete around quotes and be into insert mode
+
+```
+~ nick, 18 sept 26
+
+**JUMPING INTO BLOCK AND DOUBLE QUOTES**
+
+```
+t"la : go into this quotes and be in insert mode
+
+esc to be in normal mode 
+
+caps lock and shift + i to be in first start syntax of the line
+
+```
+
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+### AEROSPACE TILING MANAGEMENT
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+
+```
+alt-comma: accordion
+alt-slash: horizontal
+
+alt-z: fullscreen
+alt-x: close window
+
+alt-shift-l: means we focus on current focus windows to left means prioritize it more
+alt-shift-r: means we focus current focus into right
+
+then how to change focus to another windows
+
+```
+
+
+
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+### SOFTWARE ENGINEERING LESSON 
+#### ::::::::::::::::::::::::::
+#### ::::::::::::::::::::::::::
+
+
+
+```
+
+# in clean design we use wrapper to wrap all method for that particular field
+
+lets say we have Embedding function 
+
+class EmbeddingManager:
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2"):
+        self.model = SentenceTransformer(model_name)
+
+    def ...
+
+    def ...
+
+
+    def get_dimenstion(self) -> int:
+        return self.model.get_sentence_embedding_dimension()
+
+#  alot of lesson from this journey 
+- type annotation
+- wrapper
+- why use type annotation, because we can use mypy to check the error
+
+
+```

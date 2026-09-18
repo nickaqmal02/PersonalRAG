@@ -1,7 +1,7 @@
 """
 storing vector data 
 with ChromaDB
-""""
+"""
 
 import logging
 import os
@@ -15,6 +15,7 @@ from langchain_core.documents import Document
 logger = logging.getLogger(__name__)
 
 # how to create vector db ??
+# this class VectorStore called as wrapper (clean, consistent)
 class VectorStore:
     """manages document embeddings in ChromaDB. """
     def __init__(
@@ -36,7 +37,8 @@ class VectorStore:
         try:
             os.makedirs(self.persist_directory, exist_ok=True)
             self.client = chromadb.PersistentClient(
-                path=self.persist_directory
+                path=self.persist_directory,
+                settings=ChromaSettings(anonymized_telemetry=False), # add this
             )
 
             if self.clear_existing:
@@ -48,7 +50,7 @@ class VectorStore:
 
             self.collection = self.client.get_or_create_collection(
                 name=self.collection_name,
-                metadatas={"description": "RAG document embeddings"},
+                metadata={"description": "RAG document embeddings"},
             )
 
             logger.info(f"Vector store initialized. Collection {self.collection_name}")
@@ -62,7 +64,7 @@ class VectorStore:
         """Add documents and embeddings to the store"""
         if len(documents) != len(embeddings):
             raise ValueError(
-                f"Document count ({len(documents}) != Emedding count ({len(embeddings)})"
+                f"Document count ({len(documents)}) != Emedding count ({len(embeddings)})"
             )
         if not self.collection:
             raise ValueError("Collection not initialized")
