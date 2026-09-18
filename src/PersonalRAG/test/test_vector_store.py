@@ -5,6 +5,7 @@ import logging
 from langchain_core.documents import Document
 from PersonalRAG.core.embedding_manager import EmbeddingManager
 from PersonalRAG.core.vector_store import VectorStore
+from chromadb.config import Settings as ChromaSettings
 
 # setup the basic logger configuration
 logging.basicConfig(

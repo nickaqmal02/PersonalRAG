@@ -10,6 +10,7 @@ from typing import List, Any, Optional, Dict
 import numpy as np
 import chromadb
 from langchain_core.documents import Document
+from chromadb.config import Settings as ChromaSettings
 
 # like alway declaring logger first
 logger = logging.getLogger(__name__)
