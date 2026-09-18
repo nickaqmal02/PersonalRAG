@@ -51,7 +51,10 @@ class VectorStore:
 
             self.collection = self.client.get_or_create_collection(
                 name=self.collection_name,
-                metadata={"description": "RAG document embeddings"},
+                metadata={
+                    "description": "RAG document embeddings",
+                    "hnsw:space": "cosine", # we use cosine similarity
+                },
             )
 
             logger.info(f"Vector store initialized. Collection {self.collection_name}")

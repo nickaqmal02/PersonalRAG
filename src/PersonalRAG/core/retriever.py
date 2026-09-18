@@ -87,7 +87,7 @@ class RAGRetriever:
                 # convert distance to similarity_score
                 # chromadb uses cosine distance
                 # so siimilarity score = 1 - distance
-                similarity_score = max(0.0, 1 - distance) # clamping from [0, 1]
+                similarity_score = (2 - distance) / 2
 
                 if similarity_score < score_threshold:
                     continue
