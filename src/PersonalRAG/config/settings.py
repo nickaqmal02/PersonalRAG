@@ -18,8 +18,8 @@ class Settings(BaseSettings):
     # LLM CONFIGURATION
     # =========================================
     groq_api_key: Optional[str] = Field(
-        None,
-        env="GROQ_API_KEY",
+        default=None,
+        alias="GROQ_API_KEY",
         description="Groq API key for LLM access",
     )
     default_model: str = Field(
@@ -81,7 +81,7 @@ class Settings(BaseSettings):
     data_dir: str = Field(
         "./data",
         env="DATA_DIR",
-        description
+        description="main directory for our storage",
     )
     vector_store_dir: str = Field(
         "./data/vector_store",

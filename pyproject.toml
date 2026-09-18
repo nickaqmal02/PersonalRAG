@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Personal RAG agent with TUI"
 authors = ["NIK ABDUL AQMAL <nikabdulaqmal@gmail.com>"]
 readme = "README.md"
-packages = [{include = "rag_agent", from = "src"}]
+packages = [{include = "PersonalRAG", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -36,7 +36,7 @@ mypy = "^1.0.0"
 pre-commit = "^3.0.0"
 
 [tool.poetry.scripts]
-rag-agent = "rag_agent.cli.main:cli"
+PersonalRAG = "PersonalRAG.cli.main:cli"
 
 [build-system]
 requires = ["poetry-core"]

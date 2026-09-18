@@ -47,8 +47,8 @@ def ingestion(path: Optional[str] = None, chunk_size: int = 1000, chunk_overlap:
 
     how to use this method ??
     examples:
-        rag-agent ingest --path ~/Documents/xxx.pdf
-        rag-agent ingest --path ./data/ --chunk-size 500
+        PersonalRAG ingest --path ~/Documents/xxx.pdf
+        PersonalRAG ingest --path ./data/ --chunk-size 500
 
     """
     try:
@@ -105,8 +105,8 @@ def chat(query: Optional[str], interactive: bool, top_k: int):
     always note that all argument that we state for click.option must be pass in this main method
 
     examples:
-        rag-agent chat -q "What is machine learning"
-        rag-agent chat -i
+        PersonalRAG chat -q "What is machine learning"
+        PersonalRAG chat -i
 
     """
     # first thing first we need to really check wether LLM is configured or not
@@ -128,8 +128,8 @@ def chat(query: Optional[str], interactive: bool, top_k: int):
     else:
         logger.warning(" Please provide --query or --interactive")
         click.echo("\nUsage")
-        click.echo(' rag-agent chat -q "your question" ')
-        click.echo(' rag-agent chat -i ')
+        click.echo(' PersonalRAG chat -q "your question" ')
+        click.echo(' PersonalRAG chat -i ')
 
 # ╔════════════════════════════════════════════╗ 
 # ║ALL METHOD THAT ASSOCIATE WITH MAIN CHAT QUE║ 
@@ -354,7 +354,7 @@ def tui() -> None:
         app.run()
     except ImportError as e:
         logger.error(f"TUI not available yet.. {e}")
-        logger.info(f" TUI WILL BE IMPLEMENTED SOON. HOPE YOU WILL ALWAYS BE PATIENT... .Instead just use rag-agent -i ....")
+        logger.info(f" TUI WILL BE IMPLEMENTED SOON. HOPE YOU WILL ALWAYS BE PATIENT... .Instead just use PersonalRAG -i ....")
 
 # ainur
 # ╔════════════════════════════════════════════╗ 

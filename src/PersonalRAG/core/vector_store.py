@@ -26,9 +26,10 @@ class VectorStore:
         self.persist_directory = persist_directory
         self.collection_name = collection_name
         self.clear_existing = clear_existing
+
         self.client: Optional[chromadb.PersistentClient] = None
         self.collection: Optional[chromadb.Collection] = None
-        self.initialize()
+        self._initialize()
 
     def _initialize(self) -> None:
         """initialize ChromaDB client and collection"""
@@ -77,10 +78,11 @@ class VectorStore:
             doc_id = f"doc_{uuid.uuid4().hex[:8]}_{i}"
             ids.append(doc_id)
 
-            metadatas = dict(doc.metadatas)
-            metadatas['doc_index'] = i
-            metadatas['content_lenght'] = len(doc.page_content)
-            metadatas.append(metadatas)
+            metadata = dict(doc.metadata)
+            metadata['doc_index'] = i
+            metadata['content_length'] = len(doc.page_content)
+            
+            metadatas.append(metadata)
 
             documents_text.append(doc.page_content)
             embeddings_list.append(embedding.tolist())
