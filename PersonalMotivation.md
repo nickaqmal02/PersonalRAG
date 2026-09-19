@@ -393,4 +393,57 @@ class EmbeddingManager:
 ##### HOW WE FIX THE CORE PROBLEM DISTANCE AND SIMILARITY AND HOW DOES THE VECTOR DB PASS THE DISTANCE...  [19/09/26] 0020H
 
 ```
+
+CHROMADB RETURNS "DISTANCE"
+
+SO WE USE COSINE SIMILARITY SCALE
+
+-1 - 0 - +1
+
+THE FORMULA:
+
+(2 - DISTANCE) / 2
+
+because what chromadb give to us, is not accurate and what we want so
+
+Distance Ruler (ChromaDB gives this):
+0 ─────────────── 1 ─────────────── 2
+"Identical"     "Different"      "Opposite"
+
+Similarity Ruler (What we want):
+0 ─────────────── 0.5 ─────────────── 1
+"No match"      "Some match"       "Perfect match"
+
+They're OPPOSITE directions!
+
+is it any problem with it ??
+
+ok let say if distance = 0.5 its ok 
+
+to use 1 - distance but if 1.5 it becames -0.5 wrong
+
+so we flip the meaning
+
+using (2 - d) / 2
+
+so if distance is 2 from vector db we use **cosine** as a space declaration
+
+statig to our metadata collection 
+
+"hnsw:space": "cosine" which is [0, 2]
+
+cosine good for text embeddings 
+
+hnsw the algorithm
+cosine ditance metrix 
+:
+hnsw = The search engine ( how to find neighbors )
+space = the ruler how we measure the distance
+
+
+
+
+
+
+
 ```
