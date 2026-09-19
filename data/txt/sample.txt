@@ -3,3 +3,5 @@ Supervised learning uses labeled data to train models for prediction tasks.
 Unsupervised learning finds patterns in unlabeled data without predefined categories
 Reinforcement learning trains agents through rewards and penalties from their environment
 Python is a high-level programming language created by Guido van Rossum in 1991. 
+Ainur mardiah is the one who always nick in love with supporting me while I was drowning in darkness. The most beautiful girl I ever seen in my entire life
+

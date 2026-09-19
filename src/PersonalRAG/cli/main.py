@@ -230,7 +230,7 @@ def _handle_interactive(top_k: int) -> None:
         try:
             query = Prompt.ask("\n[bold cyan]You[/bold cyan]")
         except (KeyboardInterrupt, EOFError):
-            console.print("\n[yellow] Goooodbye !! [/yellow]")
+            console.print("\n[yellow] Goooodbye Nicky See you soon !! [/yellow]")
             break
 
         query = query.strip()
