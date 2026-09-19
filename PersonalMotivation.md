@@ -441,3 +441,17 @@ hnsw = The search engine ( how to find neighbors )
 space = the ruler how we measure the distance
 
 ```
+
+## ABOUT RAG
+
+> RAG have several Design Patterns 
+- Naive RAG 
+- retrieve and rerank
+- multimodal RAG
+- Graph RAG
+- Hybrid RAG
+- Agentic RAG
+- Agent RAG 
+
+~ so my application use which one ?
+

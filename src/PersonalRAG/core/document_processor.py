@@ -21,7 +21,7 @@ class DocumentProcessor:
         data_dir: str = "./data",
         chunk_size: int = 1000,
         chunk_overlap: int = 200,
-    );
+    ):
         self.data_dir = Path(data_dir)
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
@@ -205,7 +205,7 @@ class DocumentProcessor:
         return self.documents
 
     # chunking document
-    def chunk_documents(self) -> List[Document]
+    def chunk_documents(self) -> List[Document]:
         """
         split documents into chunks
         """
@@ -217,7 +217,7 @@ class DocumentProcessor:
             chunk_size=self.chunk_size,
             chunk_overlap=self.chunk_overlap,
             length_function=len,
-            seperators=["\n\n", "\n", " ", ""]
+            separators=["\n\n", "\n", " ", ""]
         )
 
         chunks = splitter.split_documents(self.documents)
@@ -238,7 +238,7 @@ class DocumentProcessor:
         # chunk
         chunks = self.chunk_documents()
 
-        logger.info(f"Pipeline complete: {len(chunks)} chunks from {self.stats['pages_processed'] pages}")
+        logger.info(f"Pipeline complete: {len(chunks)} chunks from {self.stats['pages_processed']} pages")
         return chunks
 
     def get_stats(self) -> Dict[str, int]:

@@ -7,7 +7,7 @@ import click
 import logging
 import sys
 from pathlib import Path
-
+from typing import Optional, Callable
 # setup logging once
 logging.basicConfig(
     level=logging.INFO,
@@ -54,7 +54,7 @@ def ingestion(path: Optional[str] = None, chunk_size: int = 1000, chunk_overlap:
     try:
         from PersonalRAG.core.document_processor import DocumentProcessor
         from PersonalRAG.core.embedding_manager import EmbeddingManager
-        from PersonalRAG.core.VectorStore import VectorStore
+        from PersonalRAG.core.vector_store import VectorStore
         
         # step 1: process documents
         logger.info("Step 1/3: Loading and processing documents...")
@@ -63,16 +63,16 @@ def ingestion(path: Optional[str] = None, chunk_size: int = 1000, chunk_overlap:
             chunk_overlap=chunk_overlap,
         )
 
-        source_path = path if path else processor.data.dir
+        source_path = path if path else processor.data_dir
         chunks = processor.process(source_path=source_path)
 
         if not chunks:
-            logger.warning(" No documens found to process! ")
+            logger.warning(" No documents found to process! ")
             logger.info(" Place files in ./data/ or use --path")
             return
 
         stats = processor.get_stats()
-        logger.info(f" Loaded {len(chunks)} chunks from {stats['pages']} pages")
+        logger.info(f" Loaded {len(chunks)} chunks from {stats['pages_processed']} pages")
 
         # step 2: generate the embeddings
         logger.info("Step 2/3: Generating the embeddings...")
@@ -137,6 +137,7 @@ def chat(query: Optional[str], interactive: bool, top_k: int):
 # always ensure that everything that u pass, must exactly same as you declare in the method
 def _handle_single_query(query: str, top_k: int):
     """ Handle a single query"""
+
     from PersonalRAG.pipeline.rag_pipeline import RAGPipeline
     from PersonalRAG.core.retriever import RAGRetriever
     from PersonalRAG.core.embedding_manager import EmbeddingManager
@@ -175,7 +176,7 @@ def _handle_single_query(query: str, top_k: int):
         if result.sources:
             click.echo("\n References")
             for i, source in enumerate(result.sources, 1):
-            click.echo(f"   {i}. {source['source']} (score: {source['score']:.2%})")
+                click.echo(f"   {i}. {source['source']} (score: {source['score']:.2%})")
         
         click.echo("=" * 60)
 
@@ -183,7 +184,7 @@ def _handle_single_query(query: str, top_k: int):
         logger.error(f" Query failed: {e}")
         raise click.Abort()
 
- def _handle_interactive(top_k: int) -> None:
+def _handle_interactive(top_k: int) -> None:
     """Handle interactive chat mode."""
     from rich.console import Console
     from rich.prompt import Prompt
@@ -202,7 +203,7 @@ def _handle_single_query(query: str, top_k: int):
 
     try:
         embedder = EmbeddingManager()
-        store = VectorStore(clear_existing_False)
+        store = VectorStore(clear_existing=False)
         retriever = RAGRetriever(store, embedder)
         llm = GroqProvider(
             api_key=settings.groq_api_key,
@@ -219,7 +220,7 @@ def _handle_single_query(query: str, top_k: int):
         " [cyan]/help[/cyan] - Show this help \n"
         " [cyan]/sources[/cyan] - Show sources for last answer \n"
         " [cyan]/clear[/cyan] - Clear screen \n"
-        " Ask me anything about your documents"
+        " Ask me anything about your documents",
         border_style="green"
     ))
 
@@ -240,7 +241,7 @@ def _handle_single_query(query: str, top_k: int):
         if query.startswith("/"):
             cmd = query.lower()
 
-            if cmd in ("/quit", "/exit", "/q")
+            if cmd in ("/quit", "/exit", "/q"):
                 console.print("[yellow] Goodbye Mate [/yellow]")
                 break
 
@@ -274,7 +275,7 @@ def _handle_single_query(query: str, top_k: int):
                 continue
 
         # we process the query 
-        with console.status("[bold yellow] Retrieving and generating.... [/bold yellow]")
+        with console.status("[bold yellow] Retrieving and generating.... [/bold yellow]"):
 
             try:
                 result = pipeline.query(query, return_context=True)
@@ -307,25 +308,36 @@ def status() -> None:
 
     click.echo("\n RAG Agent Status")
     click.echo("=" * 50)
-
+# ╔════════════════════════════════════════════╗ 
+# ║           CHECK EMBEDDING MODEL            ║ 
+# ╚════════════════════════════════════════════╝ 
     if settings.is_llm_configured:
         click.echo(f" LLM: Configured ({settings.default_model})")
-
     else:
         click.echo(" LLM: Not Configured (GROQ_API_KEY missing)")
 
     click.echo(f" Embedding: {settings.embedding_model}")
-
+# ╔════════════════════════════════════════════╗ 
+# ║            CHECK DATA DIRECTORY            ║ 
+# ╚════════════════════════════════════════════╝ 
     data_path = Path(settings.data_dir)
-
+    
     if data_path.exists():
-        click.echo(f" Vector DB: {count} documents")
+        click.echo(f"   Data dir: {data_path}")
+    else:
+        click.echo(f"   Data dir: {data_path} (not found)")
+# ╔════════════════════════════════════════════╗ 
+# ║           CHECK THE VECTOR STORE           ║ 
+# ╚════════════════════════════════════════════╝ 
+    try:
+        from PersonalRAG.core.vector_store import VectorStore
+        store = VectorStore(clear_existing=False)
+        count = store.count()
+        click.echo(f"   Vector DB: {count} documents")
     except Exception as e:
         click.echo(f" Vector DB: Not initialized ({e})")
 
     click.echo("=" * 50 + "\n")
-
-
 
 # ╔════════════════════════════════════════════╗ 
 # ║              VERSION COMMAND               ║ 
@@ -361,6 +373,6 @@ def tui() -> None:
 # ║THE MAIN ENTRY POINT : this is wwhy all our ║ 
 # ╚════════════════════════════════════════════╝ 
 #
-if __name__ = "__main__":
+if __name__ == "__main__":
     cli()
 

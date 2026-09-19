@@ -6,6 +6,12 @@ every config. lives here
 from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field
+from pathlib import Path
+
+# get project root (2 levels up from config/settings.py)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+ENV_FILE = PROJECT_ROOT / ".env"
+
 
 class Settings(BaseSettings):
     """
@@ -114,12 +120,11 @@ class Settings(BaseSettings):
 # ║              PYDANTIC CONFIG               ║ 
 # ╚════════════════════════════════════════════╝ 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=str(ENV_FILE),
         env_file_encoding="utf-8",
         case_sensitive=False,
         extra="ignore",
     )
-
 
 # ╔════════════════════════════════════════════╗ 
 # ║             HELPER PROPERTIES              ║ 

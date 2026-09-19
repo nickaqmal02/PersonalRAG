@@ -75,96 +75,97 @@ class RAGPipeline:
         if not results:
             logger.warning(" No relevant documents found")
             return RAGResponse(
-                answer=" I don't have enough information to answer this question."
+                answer=(" I don't have enough information to answer this question."
                        " Please make sure that you have ingested documents first. "
-                sources = []
+                ),
+                sources = [],
                 confidence=0.0,
                 context="" if return_context else None,
             )
 
-            # step 2: Build the context
-            logger.info(f" Retrieved {len(results)} documents")
+        # step 2: Build the context
+        logger.info(f" Retrieved {len(results)} documents")
 
-            # step 2 build the context
-            logger.info('Step 2/3 build the context .... ')
-            # build_context means ? 
-            context = self._build_context(results)
-            sources = self._build_sources(results)
-            confidence = self._calculate_confidence(results)
+        # step 2 build the context
+        logger.info('Step 2/3 build the context .... ')
+        # build_context means ? 
+        context = self._build_context(results)
+        sources = self._build_sources(results)
+        confidence = self._calculate_confidence(results)
 
-            # step 3: Generating the answer
-            logger.info("Step 3/3: Generating answer... ")
-            answer = self.llm.generate_with_context(
-                query=question,
-                context=context,
-            )
+        # step 3: Generating the answer
+        logger.info("Step 3/3: Generating answer... ")
+        answer = self.llm.generate_with_context(
+            query=question,
+            context=context,
+        )
 
-            logger.info(f" Answer generated (confidence: {confidence:.2%}")
+        logger.info(f" Answer generated (confidence: {confidence:.2%}")
 
-            return RAGResponse(
-                answer=answer,
-                sources=sources,
-                confidence=confidence,
-                context=context if return_context else None
-            )
+        return RAGResponse(
+            answer=answer,
+            sources=sources,
+            confidence=confidence,
+            context=context if return_context else None
+        )
         # what is _build_context ??
-        def _build_context(self, results: List[Dict[str, Any]]) -> str:
-            context_parts = []
+    def _build_context(self, results: List[Dict[str, Any]]) -> str:
+        context_parts = []
 
-            for i, doc in enumerate(results, 1):
-                source = doc['metadata'].get('source', 'unknown')
-                page = doc['metadata'].get(
+        for i, doc in enumerate(results, 1):
+            source = doc['metadata'].get('source', 'unknown')
+            page = doc['metadata'].get(
+                'page_number',
+                doc['metadata'].get('page', 'N/A')
+            )
+
+            header = f"[Document {i} - {source}"
+            if page != 'N/A':
+                header += f", page {page}"
+            header += f" (relevance: {doc['similarity_score']:.2%})]"
+
+            context_parts.append(f"{header}\n{doc['content']}\n")
+
+        return "\n".join(context_parts)
+
+    def _build_sources(self, results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """build sources list from retrieved documents"""
+        sources = []
+
+        for doc in results:
+            source = {
+                'source': doc['metadata'].get('source', 'unknown'),
+                'page': doc['metadata'].get(
                     'page_number',
                     doc['metadata'].get('page', 'N/A')
-                )
+                ),
+                'score': doc['similarity_score'],
+                'preview': (
+                    doc['content'][:200] + "..."
+                    if len(doc['content']) > 200
+                    else doc['content']
+                ),
+                'metadata': doc['metadata'],
+            }
+            sources.append(source)
 
-                header = f"[Document {i} - {source}"
-                if page != 'N/A':
-                    header += f", page {page}"
-                header += f" (relevance: {doc['similarity_score']:.2%})]"
+        return sources
 
-                context_parts.append(f"{header}\n{doc['content']}\n")
+    def _calculate_confidence(self, results: List[Dict[str, Any]]) -> float:
+        """calculate overall confidence from retrieval scores. """
+        if not results:
+            return 0.0
 
-            return "\n".join(context_parts)
+        max_score = max(doc['similarity_score'] for doc in results)
+        good_results = sum(1 for doc in results if doc['similarity_score'] >= 0.5)
+        
+        if len(results) == 1:
+            return max_score
 
-        def _build_sources(self, results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-            """build sources list from retrieved documents"""
-            sources = []
+        coverage = min(good_results / len(results), 1.0)
+        confidence = (0.7 * max_score) + (0.3 * coverage)
 
-            for doc in results:
-                source = {
-                    'source': doc['metadata'].get('source', 'unknown'),
-                    'page': doc['metadata'].get(
-                        'page_number',
-                        doc['metadata'].get('page', 'N/A')
-                    ),
-                    'score': doc['similarity_score'],
-                    'preview': (
-                        doc['content'][:200] + "..."
-                        if len(doc['content']) > 200
-                        else doc['content']
-                    ),
-                    'metadata': doc['metadata'],
-                }
-                sources.append(source)
-
-            return sources
-
-        def _calculate_confidence(self, results: List[Dict[str, Any]]) -> float:
-            """calculate overall confidence from retrieval scores. """
-            if not results:
-                return 0.0
-
-            max_score = max(doc['similarity_score'] for doc in results)
-            good_results = sum(1 for doc in results if doc['similarity_score'] >= 0.5)
-            
-            if len(results) == 1:
-                return max_score
-
-            coverage = min(good_results / len(results), 1.0)
-            confidence = (0.7 * max_score) + (0.3 * coverage)
-
-            return min(confidence, 1.0)
+        return min(confidence, 1.0)
 
 
 

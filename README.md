@@ -39,3 +39,32 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+```
+
+### DETAIL INTERPRETATION ABOUT MY APPLICATION
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   YOUR PIPELINE                     │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  📄 Documents → 🔧 Preprocess → ✂️ Chunk           │
+│       ↓                                             │
+│  🔢 Embed → 💾 Store in ChromaDB                    │
+│                                                     │
+│  ❓ Query → 🔢 Embed → 🔍 Retrieve Top-K            │
+│       ↓                                             │
+│  📝 Build Context → 🧠 LLM → ✅ Answer              │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+
+```
+
+##### this is Naive RAG - the classic retrieve then generate pattern
+
+why It's called as Naive 
+
+Because we don't even interrupt the **whole pipeline**
+
+

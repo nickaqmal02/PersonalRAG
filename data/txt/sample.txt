@@ -1,0 +1,5 @@
+Machine learning is a subset of artificial intelligence that enables systems to learn from data. 
+Supervised learning uses labeled data to train models for prediction tasks.
+Unsupervised learning finds patterns in unlabeled data without predefined categories
+Reinforcement learning trains agents through rewards and penalties from their environment
+Python is a high-level programming language created by Guido van Rossum in 1991. 

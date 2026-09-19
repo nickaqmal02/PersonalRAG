@@ -1,7 +1,8 @@
 
 import re
 import unicodedata
-from typing import List, Optional, Callabel
+import typing
+from typing import List, Optional, Callable, Dict, Any
 import logging
 from dataclasses import dataclass, field
 
@@ -51,7 +52,7 @@ def clean_text(text: str) -> str:
         '\x0c': '',     # Form feed / page break
     }
     for old, new in ocr_fixes.items():
-        text = text.replace(old.new)
+        text = text.replace(old, new)
 
 # 2. remove page number lines
         # 2. Remove page number lines (they become metadata)
@@ -89,9 +90,7 @@ def extract_metadata(text:str) -> Dict[str, Any]:
     if page_match:
         metadata['page_number'] = int(page_match.group(1))
 
-    chapter_match = re.search(r'
-    (?i)(?:chapter|section)\s+(\d+|[IVXLCDM]+)\s*[:.]?\s*(.+)?$
-            ', text, re.MULTILINE)
+    chapter_match = re.search(r'(?i)(?:chapter|section)\s+(\d+|[IVXLCDM]+)\s*[:.]?\s*(.+)?$', text, re.MULTILINE)
     
     if chapter_match:
         metadata['chapter_number'] = chapter_match.group(1)

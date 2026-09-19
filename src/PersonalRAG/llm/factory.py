@@ -22,20 +22,19 @@ class LLMFactory:
         max_tokens: int = 1024,
     ) -> BaseLLM:
 
-    """Create the LLM provider."""
-    provider = provider.lower()
-    # this ensure the consistency of our provider name
+        provider = provider.lower()
+        # this ensure the consistency of our provider name
 
-    if provider == "groq":
-        if not api_key:
-            raise ValueError("Groq requires an API key")
-        return GroqProvider(
-            api_key= api_key,
-            model=model or "llama-3.3-70b-versatile",
-            temperature=temperature,
-            max_tokens=max_tokens,
-        )
+        if provider == "groq":
+            if not api_key:
+                raise ValueError("Groq requires an API key")
+            return GroqProvider(
+                api_key= api_key,
+                model=model or "llama-3.3-70b-versatile",
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
 
-    raise ValueError(f"Unsupported provider: {provider}")
+        raise ValueError(f"Unsupported provider: {provider}")
 
 
