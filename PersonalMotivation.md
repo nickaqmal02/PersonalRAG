@@ -440,10 +440,4 @@ cosine ditance metrix
 hnsw = The search engine ( how to find neighbors )
 space = the ruler how we measure the distance
 
-
-
-
-
-
-
 ```
