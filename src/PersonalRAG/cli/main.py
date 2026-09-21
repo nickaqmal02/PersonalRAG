@@ -338,7 +338,6 @@ def status() -> None:
         click.echo(f" Vector DB: Not initialized ({e})")
 
     click.echo("=" * 50 + "\n")
-
 # ╔════════════════════════════════════════════╗ 
 # ║              VERSION COMMAND               ║ 
 # ╚════════════════════════════════════════════╝ 
@@ -367,12 +366,9 @@ def tui() -> None:
     except ImportError as e:
         logger.error(f"TUI not available yet.. {e}")
         logger.info(f" TUI WILL BE IMPLEMENTED SOON. HOPE YOU WILL ALWAYS BE PATIENT... .Instead just use PersonalRAG -i ....")
-
 # ainur
 # ╔════════════════════════════════════════════╗ 
 # ║THE MAIN ENTRY POINT : this is wwhy all our ║ 
 # ╚════════════════════════════════════════════╝ 
-#
 if __name__ == "__main__":
     cli()
-
