@@ -132,4 +132,4 @@ poetry run PersonalRAG tui
 
 ![tui application in future](media/tui_application_next.png)
 
-# HAPPY TRYING 😀, Nicky
+### HAPPY TRYING 😀, Nicky
