@@ -86,7 +86,7 @@ Because we don't even interrupt the **whole pipeline**
 
 ##### THEN HOW TO USE IT ??
 
-## **THE USAGE?**
+### **THE USAGE?**
 
 ```bash
 
@@ -108,7 +108,7 @@ poetry run PersonalRAG tui
 
 ```
 
-## **TECH STACK**
+### **TECH STACK**
 
 - Python 3.11+
 - ChromaDB (vector store)
@@ -118,4 +118,18 @@ poetry run PersonalRAG tui
 - Click (CLI)
 - Poetry (packaging)
 
+### **A LITTLE SCREENSHOT FROM THIS APPLICATION**
 
+![direct_query](media/direct_query.png)
+![direct_query_answer](media/direct_query_answer.png)
+
+![interactive_one](media/interactive_one.png)
+
+![interactive_two](media/interactive_two.png)
+
+![interactive_three](media/interactive_three.png)
+![interactive_goodbye](media/interactive_four.png)
+
+![tui application in future](media/tui_application_next.png)
+
+# HAPPY TRYING 😀, Nicky
