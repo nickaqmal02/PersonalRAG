@@ -7,6 +7,7 @@ import logging
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 
+from PersonalRAG.core.reranker import Reranker
 from PersonalRAG.core.retriever import RAGRetriever
 from PersonalRAG.llm.base import BaseLLM
 
@@ -37,7 +38,9 @@ class RAGPipeline:
         self,
         retriever: RAGRetriever,
         llm: BaseLLM,
+        reranker: Optional[Reranker] = None,
         top_k: int = 5,
+        retrieve_k: int = 20,
         score_threshold: float = 0.2,
     ):
         """
@@ -50,8 +53,10 @@ class RAGPipeline:
             score_threshold: Minimum similarity score
         """
         self.retriever = retriever
+        self.reranker = reranker
         self.llm = llm
         self.top_k = top_k
+        self.retrieve_k = retrieve_k
         self.score_threshold = score_threshold
 
     def query(
@@ -64,14 +69,20 @@ class RAGPipeline:
         """
         logger.info(f" Processing query: {question}")
 
+# ╔════════════════════════════════════════════╗ 
+# ║              STEP 1: RETRIEVE              ║ 
+# ╚════════════════════════════════════════════╝ 
         # step 1 we retrieve the relevant documents
-        logger.info(f"Step 1/3: retrieving top {self.top_k} documents... ")
+        retrieve_count = self.retrieve_k if self.reranker else self.top_k
+
+        logger.info(f"Step 1/4: retrieving top {retrieve_count} documents... ")
 
         results = self.retriever.retrieve(
             question, 
-            top_k=self.top_k,
+            top_k=retrieve_count,
             score_threshold=self.score_threshold,
         )
+
         if not results:
             logger.warning(" No relevant documents found")
             return RAGResponse(
@@ -82,19 +93,31 @@ class RAGPipeline:
                 confidence=0.0,
                 context="" if return_context else None,
             )
-
         # step 2: Build the context
         logger.info(f" Retrieved {len(results)} documents")
-
+# ╔════════════════════════════════════════════╗ 
+# ║         STEP 2: BUILD THE CONTEXT          ║ 
+# ╚════════════════════════════════════════════╝ 
         # step 2 build the context
-        logger.info('Step 2/3 build the context .... ')
+        if self.reranker:
+            logger.info('Step 2/4: Reranking to top {self.top_k} .... ')
+            results = self.reranker.rerank(question, results)
+            logger.info(f"Reranked to {len(results)} documents")
+        else:
+            logger.info(f"Step 2/4: Reranking to top {self.top_k}...")
+
+# ╔════════════════════════════════════════════╗ 
+# ║           STEP 3: BUILD CONTEXT            ║ 
+# ╚════════════════════════════════════════════╝ 
         # build_context means ? 
+        logger.info("STEP 3/4: Building Context... ")
         context = self._build_context(results)
         sources = self._build_sources(results)
         confidence = self._calculate_confidence(results)
-
-        # step 3: Generating the answer
-        logger.info("Step 3/3: Generating answer... ")
+# ╔════════════════════════════════════════════╗ 
+# ║             STEP 4: GENERATIVE             ║ 
+# ╚════════════════════════════════════════════╝ 
+        logger.info("Step 4/4: Generating answer... ")
         answer = self.llm.generate_with_context(
             query=question,
             context=context,
@@ -133,6 +156,8 @@ class RAGPipeline:
         sources = []
 
         for doc in results:
+            score = doc.get('rerank_score', doc.get('similarity_score', 0))
+        
             source = {
                 'source': doc['metadata'].get('source', 'unknown'),
                 'page': doc['metadata'].get(
@@ -156,16 +181,23 @@ class RAGPipeline:
         if not results:
             return 0.0
 
-        max_score = max(doc['similarity_score'] for doc in results)
-        good_results = sum(1 for doc in results if doc['similarity_score'] >= 0.5)
-        
-        if len(results) == 1:
-            return max_score
+        scores = [
+            doc.get('rerank_score', doc.get('similarity_score', 0))
+            for doc in results
+        ]
 
-        coverage = min(good_results / len(results), 1.0)
-        confidence = (0.7 * max_score) + (0.3 * coverage)
+        max_score = max(scores)
 
-        return min(confidence, 1.0)
+        if self.reranker:
+            import math
+            normalized = 1 / (1 + math.exp(-max_score))
+            return min(normalized, 1.0)
+
+        return min(max_score, 1.0)
+
+
+
+
 
 
 

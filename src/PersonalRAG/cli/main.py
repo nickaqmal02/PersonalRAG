@@ -142,27 +142,34 @@ def _handle_single_query(query: str, top_k: int):
     from PersonalRAG.core.retriever import RAGRetriever
     from PersonalRAG.core.embedding_manager import EmbeddingManager
     from PersonalRAG.core.vector_store import VectorStore
+    from PersonalRAG.core.reranker import Reranker
     from PersonalRAG.llm.groq_provider import GroqProvider
     from PersonalRAG.config.settings import settings
 
     try:
         # Build the whole pipeline
-        logger.info(" Building the RAG pipeline...")
+        logger.info(" Building the RAG pipeline with reranking...")
         # 2. Build components
         embedder = EmbeddingManager()
         store = VectorStore(clear_existing=False)
         # retriever means ?? we retrieve the binary from vector db
         retriever = RAGRetriever(store, embedder)
+
+        reranker = Reranker(top_k=top_k)
         
         llm = GroqProvider(
             api_key=settings.groq_api_key,
             model=settings.default_model,
         )
         # 3. Create pipeline (holds retriever + llm)
-        pipeline = RAGPipeline(retriever, llm, top_k=top_k)
+        pipeline = RAGPipeline(
+            retriever,
+            llm,
+            top_k=top_k,
+            retrieve_k=20, # means retrieve 20, rerank to 5
+        )
 
-        logger.info(f"  Question: {query}")
-        # 4. ask the pipeline 
+        logger.info(f" Question: {query}")
         result = pipeline.query(query, return_context=True)
 
         click.echo("\n" + "=" * 60)
@@ -195,21 +202,29 @@ def _handle_interactive(top_k: int) -> None:
     from PersonalRAG.core.retriever import RAGRetriever
     from PersonalRAG.core.embedding_manager import EmbeddingManager
     from PersonalRAG.core.vector_store import VectorStore
+    from PersonalRAG.core.reranker import Reranker
     from PersonalRAG.llm.groq_provider import GroqProvider
     from PersonalRAG.config.settings import settings
 
     console = Console()
-    console.print("[bold yellow] Building RAG pipeline... [/bold yellow]")
+    console.print("[bold yellow] Building RAG pipeline with reranking... [/bold yellow]")
 
     try:
         embedder = EmbeddingManager()
         store = VectorStore(clear_existing=False)
         retriever = RAGRetriever(store, embedder)
+        reranker = Reranker(top_k=top_k)
         llm = GroqProvider(
             api_key=settings.groq_api_key,
             model=settings.default_model
         )
-        pipeline = RAGPipeline(retriever, llm, top_k=top_k)
+        pipeline = RAGPipeline(
+            retriever,
+            llm,
+            top_k=top_k,
+            retrieve_k=20,
+        )
+        
     except Exception as e:
         console.print(f"[red] Failed to build pipeline: {e}[/red]")
         return
@@ -242,7 +257,7 @@ def _handle_interactive(top_k: int) -> None:
             cmd = query.lower()
 
             if cmd in ("/quit", "/exit", "/q"):
-                console.print("[yellow] Goodbye Mate [/yellow]")
+                console.print("[yellow] Goodbye Nicky  [/yellow]")
                 break
 
             elif cmd == "/help":
@@ -285,7 +300,7 @@ def _handle_interactive(top_k: int) -> None:
                 continue
 
         # show answer
-        console.print("[bold green] Assistant: [/bold green]")
+        console.print("[bold green] Nicky Buddy: [/bold green]")
         console.print(Markdown(result.answer))
 
         console.print(
@@ -295,7 +310,6 @@ def _handle_interactive(top_k: int) -> None:
 
         if result.sources:
             console.print("[dim] Type /sources to see references [/dim]")
-
 # ╔════════════════════════════════════════════╗ 
 # ║               STATUS COMMAND               ║ 
 # ╚════════════════════════════════════════════╝ 

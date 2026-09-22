@@ -569,3 +569,7 @@ self.run_worker(self.process_query(query))
 
 
 ```
+
+"My RAG agent uses the Naive RAG pattern - retrieve, build context, generate. Im planning to add reranking next using a cross-encoder, which typically improves retrieval quality by 20-30%. After that I will explore hybrid search combining vector and BM25, and eventually agentic RAG where the agent decides when to retrieve"
+
+
