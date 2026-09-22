@@ -13,9 +13,25 @@ A personal RAG (Retrieval-Augmented Generation) agent with a beautiful terminal 
 
 ## 🚀 Quick Start
 
+```bash
+git clone https://github.com/nickaqmal02/PersonalRAG.git
+cd PersonalRAG
+poetry install
+
+# noted that everytime you adding package into pyproject.toml
+# you have to run poetry install but but but need to run the 
+eval $(poetry env activate)
+
+# copy the example of environment example
+cp .env.example .env
+# Add your GROQ_API_KEY
+
+```
+
 ### Installation
 
 ```bash
+
 pip install rag-agent
 
 MIT License
@@ -44,7 +60,7 @@ SOFTWARE.
 
 ### DETAIL INTERPRETATION ABOUT MY APPLICATION
 
-```
+```bash
 ┌─────────────────────────────────────────────────────┐
 │                   YOUR PIPELINE                     │
 ├─────────────────────────────────────────────────────┤
@@ -66,5 +82,40 @@ SOFTWARE.
 why It's called as Naive 
 
 Because we don't even interrupt the **whole pipeline**
+
+
+##### THEN HOW TO USE IT ??
+
+## **THE USAGE?**
+
+```bash
+
+eval $(poetry env activate)
+# Ingest documents first but you gotta upload the document inside the data/filestype/
+poetry run PersonalRAG ingestion
+
+# running the single query
+poetry run PersonalRAG chat -q "what is machine learning"
+
+# interactive mode
+poetry run PersonalRAG chat -i
+
+# get the status of our application
+poetry run PersonalRAG status
+
+# in future we will update the next features of our tui application but for now, cli interactive was enough
+poetry run PersonalRAG tui
+
+```
+
+## **TECH STACK**
+
+- Python 3.11+
+- ChromaDB (vector store)
+- SentenceTransformers (embeddings)
+- LangChain (document loading)
+- Groq (LLM)
+- Click (CLI)
+- Poetry (packaging)
 
 

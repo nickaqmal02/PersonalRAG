@@ -516,8 +516,56 @@ Textual keeps looping (waiting for next event)
 
 so we use asyncio.to_thread to run the blocking RAG pipeline in the background, then call_from_thread to update the UI safely.
 
+```
 
+so mostly we do synchronous programming
+which means we can do some task while waiting another task to finish
+
+
+# THIS IS THE REAL TRADE OFF BETWEEN USING ASYNC VS THREADING
+> I actually built a RAG Agent with a textual TUI. The RAG pipeline uses Sentence Transformers, which CPU-heavy and blocking
+
+> I first tried asyncio.to_thread(), but it crashed on macOS
+
+> What is different between thread and process
+
+**Process**:= A running program with its own memory
+**Thread**:= A worker inside a process, sharing memory
+
+**The Key takeaway: One process can have many threads. One thread belongs to one process**
 
 
 ```
+┌─────────────────────────────────────────┐
+│           PROCESS                       │
+│  (Own memory, own file descriptors)     │
+│                                         │
+│  ┌──────────┐  ┌──────────┐  ┌────────┐ │
+│  │ Thread 1 │  │ Thread 2 │  │Thread 3│ │
+│  │ (main)   │  │ (worker) │  │(worker)│ │
+│  └──────────┘  └──────────┘  └────────┘ │
+│                                         │
+│  All threads share the same memory      │
+└─────────────────────────────────────────┘
 
+┌─────────────────────────────────────────┐
+│           PROCESS 2                     │
+│  (Separate memory)                      │
+│                                         │
+│  ┌──────────┐  ┌──────────┐             │
+│  │ Thread 1 │  │ Thread 2 │             │
+│  └──────────┘  └──────────┘             │
+└─────────────────────────────────────────┘
+
+```
+**Processes are isolated. But threads are share.**
+
+**what does it mean run_worker**
+
+```
+use-case example
+
+self.run_worker(self.process_query(query))
+
+
+```

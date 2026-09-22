@@ -3,7 +3,13 @@ Textual TUI for PersonalRAG
 A beautiful terminal interface for chatting with your documents.
 
 """
-import asyncio
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+import threading
 import logging
 from typing import Optional
 # ╔════════════════════════════════════════════╗ 
@@ -71,7 +77,7 @@ class AnswerPanel(Static):
         text.append(" Assistant\n\n", style="bold green")
         text.append(answer)
         text.append("\n\n")
-        text.append(" confidence {confidence:.2%}", style="dim")
+        text.append(f" confidence {confidence:.2%}", style="dim")
         text.append(f"  | Sources: {sources}", style="dim")
         self.update(text)
 
@@ -86,8 +92,12 @@ class RAGChatApp(App):
         background: $surface;
     }
 
+    #chat-wrapper {
+        height: 1fr;
+    }
+
     /* Chat history - top, scrollable */
-    #chat-history {
+    #chat-container {
         height: 1fr;
         border: solid $primary;
         margin: 1 1 0 1;
@@ -193,6 +203,7 @@ class RAGChatApp(App):
 # ╚════════════════════════════════════════════╝ 
     def on_mount(self) -> None:
         """Initialize when app starts."""
+        self.write_success("TEST: on_mount reached")
         self.set_status(" Building RAG pipeline... ")
         self.build_pipeline()
         self.show_welcome()
@@ -273,7 +284,7 @@ class RAGChatApp(App):
     def set_confidence(self, confidence: float) -> None:
         """Update confidence in status bar. """
         status_bar = self.query_one("#status-bar", StatusBar)
-        status_bar.sources = confidence
+        status_bar.confidence = confidence
 
     def set_sources(self, count: int) -> None:
         """Update sources count in status bar"""
@@ -334,8 +345,9 @@ class RAGChatApp(App):
             return
 
         self.write(f"[bold cyan]You: [/bold cyan] {query}")
-        self.run_worker(self.process_query(query))
-            
+        self.process_query(query)
+        
+
     def handle_command(self, command: str) -> None:
         """handle slash commands"""
         cmd = command.lower().strip()
@@ -361,67 +373,56 @@ class RAGChatApp(App):
 
         self.focus_input()
 
-    async def process_query(self, query: str) -> None:
+    def process_query(self, query: str) -> None:
         """
-        Process a query in the background
-        
-        Why async ?
-        - Textual's event loop must keep running
-        - pipeline.query() is blocking (CPU + network)
-        - asyncio.to_thread runs it back ground thread
-        - UI stays responsive
+        process a query directly on the main thread
+
+        Trade-off: UI freezes for 2-3 seconds during query.
+        Why ? : Pytorch + background threads = deadlock on MacOS
         """
-        # asyncronously
-        
         try:
-            self.set_status(" Retrieving and generating...")
+            self.set_status("Retrieving and generatin ..")
+            self.refresh()
 
-            # run pipeline in thread pool
-            result = await asyncio.to_thread(
-                self.pipeline.query, 
-                query,
-            )
-            # write answer
-            self.write("")
-            self.write("[bold green] Assistant: [/bold green]")
-            self.write(f"{result.answer}")
+            # direct synchonours call
+            result = self.pipeline.query(query)
 
-            # update the answer panel
-            self.update_answer_panel(
-                result.answer,
-                result.confidence,
-                len(result.sources),
-            )
+            # displaying the resul
+            self._display_result(result)
 
-            # update metadata
-                    # Update metadata
-            self.set_confidence(result.confidence)
-            
-            self.set_sources(len(result.sources))
-            
-            self.last_sources = result.sources
-            
-            self.set_status("✅ Ready")
-            
-            # Summary
-            self.write_info(
-                f"Confidence: {result.confidence:.0%} | "
-                f"Sources: {len(result.sources)}"
-            )
-
-            if result.sources:
-                self.write_info("Type /sources to see references")
-        
-        except Exception as e:
+        except Exception as e:  
             import traceback
-
             self.write_error(f"Error: {e}")
-            self.write_error(f"[red]{traceback.format_exc()} [/red]")
-            self.set_status("Error")
 
         self.focus_input()
+        
+    # method to display result
+    def _display_result(self, result) -> None:
+        """Display result on main thread"""
+        self.write("")
+        self.write("[bold green] Assistant: [/bold green]")
+        self.write(f"{result.answer}")
 
+        self.update_answer_panel(
+            result.answer,
+            result.confidence,
+            len(result.sources),
+        )
 
+        self.set_confidence(result.confidence)
+        self.set_sources(len(result.sources))
+        self.last_sources = result.sources
+        self.set_status("Ready Mate")
+
+        self.write_info(
+            f"Confidence: {result.confidence:.0%} | "
+            f"Sources: {len(result.sources)}"
+        )
+
+        if result.sources:
+            self.write_info("Type /sources to see references")
+
+        self.focus_input()
 
     def show_status(self) -> None:
         """Show system status"""
